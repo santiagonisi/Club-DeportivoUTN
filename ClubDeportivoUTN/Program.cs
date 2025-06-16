@@ -208,7 +208,7 @@ namespace ClubDeportivoUTN
                         break;
                     case 6:
                         Console.Write("Nombre instalación: "); string nom = Console.ReadLine();
-                        Console.Write("Tipo (0:Cancha, 1:Pileta, 2:Gimnasio, 3:Sala): "); TipoInstalacion tipo = (TipoInstalacion)int.Parse(Console.ReadLine());
+                        Console.Write("Tipo (0:Cancha de futbol, 1:Cancha de tenis, 2:Pileta, 3:Gimnasio): "); TipoInstalacion tipo = (TipoInstalacion)int.Parse(Console.ReadLine());
                         Console.WriteLine("Seleccione actividad por número:");
                         for (int i = 0; i < club.Actividades.Count; i++)
                             Console.WriteLine($"{i}: {club.Actividades[i].Nombre}");
