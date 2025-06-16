@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.IO;
 
-namespace ClubDeportivo
+namespace ClubDeportivoUTN
 {
-    // ---------------- ENUMS ----------------
+    //enunms
     public enum CategoriaSocio { Infantil, Juvenil, Adulto }
     public enum PuestoEmpleado { Entrenador, Administrativo, Mantenimiento }
-    public enum TipoInstalacion { Cancha, Pileta, Gimnasio, SalaMultiproposito }
+    public enum TipoInstalacion { CanchaFutbol, CanchaTenis, Pileta, Gimnasio }
 
-    // ---------------- INTERFACES ----------------
+    //interfaz
     public interface IPagable
     {
         double CalcularPago();
     }
 
-    // ---------------- CLASES ----------------
+    //clases
     public class Persona
     {
         public string Nombre { get; set; }
@@ -147,7 +147,7 @@ namespace ClubDeportivo
         }
     }
 
-    // ---------------- PROGRAMA ----------------
+    
     class Program
     {
         static Club club = new Club();
@@ -159,7 +159,7 @@ namespace ClubDeportivo
 
             do
             {
-                Console.WriteLine("\n--- Menú Principal ---");
+                Console.WriteLine("\n Menú Principal ");
                 Console.WriteLine("1. Agregar Socio");
                 Console.WriteLine("2. Agregar Empleado");
                 Console.WriteLine("3. Listar Socios");
@@ -193,11 +193,11 @@ namespace ClubDeportivo
                         club.Empleados.Add(new Empleado(n, a, d, f, p, s));
                         break;
                     case 3:
-                        Console.WriteLine("\n--- Socios ---");
+                        Console.WriteLine("\n Socios ");
                         club.Socios.ForEach(Console.WriteLine);
                         break;
                     case 4:
-                        Console.WriteLine("\n--- Empleados ---");
+                        Console.WriteLine("\n Empleados ");
                         club.Empleados.ForEach(Console.WriteLine);
                         break;
                     case 5:
@@ -217,7 +217,7 @@ namespace ClubDeportivo
                         break;
                     case 7:
                         club.GuardarDatos();
-                        Console.WriteLine("Datos guardados. Saliendo...");
+                        Console.WriteLine("Datos guardados.");
                         break;
                 }
             } while (opcion != 7);
