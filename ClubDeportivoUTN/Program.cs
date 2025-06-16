@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ClubDeportivoUTN
 {
-    //enunms
+    //enunm
     public enum CategoriaSocio { Infantil, Juvenil, Adulto }
     public enum PuestoEmpleado { Entrenador, Administrativo, Mantenimiento }
     public enum TipoInstalacion { CanchaFutbol, CanchaTenis, Pileta, Gimnasio }
