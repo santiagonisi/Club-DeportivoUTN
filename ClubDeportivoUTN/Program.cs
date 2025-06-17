@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace ClubDeportivoUTN
+namespace ClubDeportivo
 {
     //enunm
     public enum CategoriaSocio { Infantil, Juvenil, Adulto }
     public enum PuestoEmpleado { Entrenador, Administrativo, Mantenimiento }
-    public enum TipoInstalacion { CanchaFutbol, CanchaTenis, Pileta, Gimnasio }
+    public enum TipoInstalacion { Cancha, Pileta, Gimnasio, SalaMultiproposito }
 
     //interfaz
     public interface IPagable
@@ -16,7 +18,7 @@ namespace ClubDeportivoUTN
         double CalcularPago();
     }
 
-    //clases
+    //class
     public class Persona
     {
         public string Nombre { get; set; }
@@ -147,7 +149,29 @@ namespace ClubDeportivoUTN
         }
     }
 
-    
+    public class ClimaAPI
+    {
+        public static async Task ConsultarClimaAsync()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string url = "https://api.open-meteo.com/v1/forecast?latitude=-34.61&longitude=-58.38&current_weather=true";
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string contenido = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("\nClima actual en Buenos Aires:");
+                    Console.WriteLine(contenido);
+                }
+                else
+                {
+                    Console.WriteLine("No se pudo obtener el clima. Código: " + response.StatusCode);
+                }
+            }
+        }
+    }
+
+    //program
     class Program
     {
         static Club club = new Club();
@@ -167,6 +191,8 @@ namespace ClubDeportivoUTN
                 Console.WriteLine("5. Agregar Actividad");
                 Console.WriteLine("6. Agregar Instalación");
                 Console.WriteLine("7. Guardar y Salir");
+                Console.WriteLine("8. Consultar clima actual en Buenos Aires");
+                Console.WriteLine("9. Inscribir Socio a una Actividad");
                 Console.Write("Seleccione una opción: ");
 
                 opcion = int.Parse(Console.ReadLine());
@@ -178,7 +204,7 @@ namespace ClubDeportivoUTN
                         Console.Write("Nombre: "); string n = Console.ReadLine();
                         Console.Write("Apellido: "); string a = Console.ReadLine();
                         Console.Write("DNI: "); string d = Console.ReadLine();
-                        Console.Write("Fecha Nacimiento (yyyy-mm-dd): "); DateTime f = DateTime.Parse(Console.ReadLine());
+                        Console.Write("Fecha Nacimiento: "); DateTime f = DateTime.Parse(Console.ReadLine());
                         Console.Write("Categoría (0:Infantil, 1:Juvenil, 2:Adulto): "); CategoriaSocio c = (CategoriaSocio)int.Parse(Console.ReadLine());
                         Console.Write("Cuota mensual: "); double q = double.Parse(Console.ReadLine());
                         club.Socios.Add(new Socio(n, a, d, f, c, q));
@@ -187,17 +213,17 @@ namespace ClubDeportivoUTN
                         Console.Write("Nombre: "); n = Console.ReadLine();
                         Console.Write("Apellido: "); a = Console.ReadLine();
                         Console.Write("DNI: "); d = Console.ReadLine();
-                        Console.Write("Fecha Nacimiento (yyyy-mm-dd): "); f = DateTime.Parse(Console.ReadLine());
+                        Console.Write("Fecha Nacimiento: "); f = DateTime.Parse(Console.ReadLine());
                         Console.Write("Puesto (0:Entrenador, 1:Administrativo, 2:Mantenimiento): "); PuestoEmpleado p = (PuestoEmpleado)int.Parse(Console.ReadLine());
                         Console.Write("Sueldo: "); double s = double.Parse(Console.ReadLine());
                         club.Empleados.Add(new Empleado(n, a, d, f, p, s));
                         break;
                     case 3:
-                        Console.WriteLine("\n Socios ");
+                        Console.WriteLine("\n Socios: ");
                         club.Socios.ForEach(Console.WriteLine);
                         break;
                     case 4:
-                        Console.WriteLine("\n Empleados ");
+                        Console.WriteLine("\n Empleados:");
                         club.Empleados.ForEach(Console.WriteLine);
                         break;
                     case 5:
@@ -208,7 +234,7 @@ namespace ClubDeportivoUTN
                         break;
                     case 6:
                         Console.Write("Nombre instalación: "); string nom = Console.ReadLine();
-                        Console.Write("Tipo (0:Cancha de futbol, 1:Cancha de tenis, 2:Pileta, 3:Gimnasio): "); TipoInstalacion tipo = (TipoInstalacion)int.Parse(Console.ReadLine());
+                        Console.Write("Tipo (0:Cancha, 1:Pileta, 2:Gimnasio, 3:Sala): "); TipoInstalacion tipo = (TipoInstalacion)int.Parse(Console.ReadLine());
                         Console.WriteLine("Seleccione actividad por número:");
                         for (int i = 0; i < club.Actividades.Count; i++)
                             Console.WriteLine($"{i}: {club.Actividades[i].Nombre}");
@@ -219,8 +245,26 @@ namespace ClubDeportivoUTN
                         club.GuardarDatos();
                         Console.WriteLine("Datos guardados.");
                         break;
+                    case 8:
+                        ClimaAPI.ConsultarClimaAsync().Wait();
+                        break;
+                    case 9:
+                        Console.WriteLine("Seleccione un socio por número:");
+                        for (int i = 0; i < club.Socios.Count; i++)
+                            Console.WriteLine($"{i}: {club.Socios[i].Nombre} {club.Socios[i].Apellido}");
+                        int socioIndex = int.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Seleccione una actividad por número:");
+                        for (int i = 0; i < club.Actividades.Count; i++)
+                            Console.WriteLine($"{i}: {club.Actividades[i].Nombre}");
+                        int actividadIndex = int.Parse(Console.ReadLine());
+
+                        club.Actividades[actividadIndex].InscribirSocio(club.Socios[socioIndex]);
+                        Console.WriteLine("Socio inscripto a la actividad.");
+                        break;
                 }
             } while (opcion != 7);
         }
     }
 }
+
